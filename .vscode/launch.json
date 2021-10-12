@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "program": "${workspaceFolder}/src/criptos.ts",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "start:watch"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "restart": true,
+      "port": 5858
+    }
+  ]
+}

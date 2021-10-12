@@ -1,0 +1,2 @@
+export const enderecoServidorHttp = process.env.CRIPTOS_ENDERCO_SERVIDOR_HTTP
+export const enderecoServidorGraphql = process.env.CRIPTOS_ENDERCO_SERVIDOR_GRAPHQL
