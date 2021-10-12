@@ -1,0 +1,8 @@
+Instalacao
+----------------------------------------------------------------
+
+
+git clone https://github.com/danilolr/criptos-graphql-typescript.git
+npm install 
+editar o env.sh com os seus parametros de banco e chave/secret da binance
+source ./env.sh

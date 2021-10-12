@@ -11,7 +11,7 @@ export abstract class Estrategia {
 
 export abstract class EstrategiaFactory {
 
-    public abstract obtemNome(): string
+    public abstract obtemInfoEstrategia(): any
     public abstract criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia>
 
 }

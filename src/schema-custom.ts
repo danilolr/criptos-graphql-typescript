@@ -1,6 +1,6 @@
 export const typeDefs = `
     extend type Query {
-        listaEstrategia: [String!]!
+        listaEstrategia: [Estrategia!]!
     }
     extend type Mutation {        
         autenticacao(emailCpf: String!, senha: String!):RetornoAutenticacao!
@@ -10,6 +10,22 @@ export const typeDefs = `
 
     extend type Query {
         versao: String
+    }
+
+    type Estrategia {
+        nome: String!
+        parametros: [ParametroEstrategia!]!
+    }
+
+    type ParametroEstrategia {
+        nome: String!
+        tipo: TipoParametro
+    }
+
+    enum TipoParametro {
+        INTEGER
+        FLOAT
+        DATE       
     }
 
     type RetornoAutenticacao {

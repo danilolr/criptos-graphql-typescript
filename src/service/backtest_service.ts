@@ -1,7 +1,5 @@
-const fs = require('fs')
 import { Database } from "../database-custom"
-import { CotacaoHistoricoValor } from "../gen/model"
-import { Estrategia, Contexto, FonteIndicadores } from "../estrategias/estrategia"
+import { Contexto, FonteIndicadores } from "../estrategias/estrategia"
 import { IndicadoresService } from "./indicadores_service"
 import { EstrategiaService } from "./estrategia_service"
 
@@ -48,69 +46,4 @@ export class BacktestService {
         return r
     }
 
-    //     gravaGrafico(cotacoes: CotacaoHistoricoValor[], ctx: Contexto) {
-    //         var s = '{\n"ohlcv": [\n'
-
-    //         for (let i = 0; i < cotacoes.length; i++) {
-    //             const cotacao = cotacoes[i]
-    //             console.log(cotacao.dataHora)
-    //             if (i == cotacoes.length - 1) {
-    //                 s += `
-    //                 [
-    //                     ${cotacao.dataHora.getTime() - 3600000 * 3},
-    //                     ${cotacao.open},
-    //                     ${cotacao.high},
-    //                     ${cotacao.low},
-    //                     ${cotacao.close},
-    //                     ${cotacao.volume}
-    //                 ]`
-    //             } else {
-    //                 s += `
-    //                 [
-    //                     ${cotacao.dataHora.getTime() - 3600000 * 3},
-    //                     ${cotacao.open},
-    //                     ${cotacao.high},
-    //                     ${cotacao.low},
-    //                     ${cotacao.close},
-    //                     ${cotacao.volume}
-    //                 ],`
-    //             }
-    //         }
-
-    //         // [
-    //         //     1609460280000,
-    //         //     1,
-    //         //     29267.96,
-    //         //     "Compra"
-    //         // ],
-    //         // [
-    //         //     1609460340000,
-    //         //     0,
-    //         //     29267.96,
-    //         //     "Venda"
-    //         // ]
-
-    //         s = s + `],    "onchart": [
-    //             {
-    //                 "name": "Trades",
-    //                 "type": "Trades",
-    //                 "data": [`
-
-    //         const ordens = ctx.obtemOrdens()
-    //         for (let i = 0; ordens.length; i++) {
-    //             if (i == ordens.length - 1) {
-    //             } else {
-
-    //             }
-
-    //         }
-
-    //         s = s + `]
-    //                 }
-    //         ]
-    //     }`
-
-
-    //         fs.writeFileSync("/home/danilo/temp/temp/trading-vue-js/data/data.json", s)
-    //     }
 }

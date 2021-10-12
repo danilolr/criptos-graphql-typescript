@@ -46,8 +46,8 @@ export class EstrategiaCruzaMedia extends Estrategia {
 
 export class EstrategiaCruzaMediaFactory extends EstrategiaFactory {
 
-    public obtemNome(): string {
-        return "CRUZA_MEDIA"
+    public obtemInfoEstrategia(): any {
+        return { nome: "CRUZA_MEDIA", parametros: [{ nome: "mediaCurta", tipo: "INTEGER" }, { nome: "mediaLonga", tipo: "INTEGER" }] }
     }
 
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {

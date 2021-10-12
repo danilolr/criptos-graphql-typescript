@@ -17,7 +17,7 @@ export class EstrategiaService {
     listaEstrategias() {
         const r = []
         for (let factory of this.estrategiasDisponiveis) {
-            r.push(factory.obtemNome())
+            r.push(factory.obtemInfoEstrategia())
         }
         return r
     }
@@ -31,7 +31,7 @@ export class EstrategiaService {
 
     private obtemFactory(nomeEstrategia: string): EstrategiaFactory {
         for (let factory of this.estrategiasDisponiveis) {
-            if (factory.obtemNome() == nomeEstrategia) {
+            if (factory.obtemInfoEstrategia().nome == nomeEstrategia) {
                 return factory
             }
         }
