@@ -1,10 +1,11 @@
 import { CotacaoHistoricoValor } from "../gen/model";
 import { Estrategia, Contexto, FonteIndicadores, Indicador, EstrategiaFactory, TipoOrdem } from "./estrategia";
 
-export class EstrategiaRsi extends Estrategia {
+export class EstrategiaComStopRsi extends Estrategia {
 
     private rsi: Indicador
     private comprado: boolean = false;
+    private valorStop: number;
 
     public async inicializa(indicadores: FonteIndicadores, params: any) {
         this.rsi = await indicadores.calculaIndiceForcaRelativa(14, "#00FF00")
@@ -22,32 +23,41 @@ export class EstrategiaRsi extends Estrategia {
 
         if (this.comprado) {
             if (rsiValue > 60) {
-                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close)
+                const precoVenda = candles[candles.length - 1].close
+                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, precoVenda)
                 this.comprado = false
+            } else {
+                if (candles[candles.length - 1].low < this.valorStop) {
+                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, this.valorStop)
+                    this.comprado = false
+                }
             }
         } else {
             if (rsiValue < 40) {
+                const precoCompra = candles[candles.length - 1].close
                 ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close)
+                this.valorStop = precoCompra * 0.95
                 this.comprado = true
             }
         }
     }
 }
 
-export class EstrategiaRsiFactory extends EstrategiaFactory {
+export class EstrategiaRsiComStopFactory extends EstrategiaFactory {
 
     public obtemInfoEstrategia(): any {
         return {
-            nome: "RSI",
+            nome: "RSI_STOP",
             parametros: [
                 { nome: "tempoRsi", tipo: "INTEGER", valorDefault: "14" },
                 { nome: "limiteCompra", tipo: "FLOAT", valorDefault: "40" },
-                { nome: "limiteVenda", tipo: "FLOAT", valorDefault: "60" }]
+                { nome: "limiteVenda", tipo: "FLOAT", valorDefault: "60" },
+                { nome: "percStop", tipo: "FLOAT", valorDefault: "5" }]
         }
     }
 
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {
-        const estrategia = new EstrategiaRsi()
+        const estrategia = new EstrategiaComStopRsi()
         await estrategia.inicializa(indicadores, params)
         return estrategia
     }

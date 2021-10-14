@@ -19,7 +19,9 @@ export const typeDefs = `
 
     type ParametroEstrategia {
         nome: String!
-        tipo: TipoParametro
+        tipo: TipoParametro!
+        valorDefault: String
+        comentario: String
     }
 
     enum TipoParametro {

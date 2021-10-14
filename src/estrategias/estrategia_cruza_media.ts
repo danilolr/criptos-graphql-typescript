@@ -5,23 +5,27 @@ export class EstrategiaCruzaMedia extends Estrategia {
 
     private mediaMovelCurta: Indicador
     private mediaMovelLonga: Indicador
-    private comprado: boolean = false;
+    private comprado: boolean = false
+    private mediaCurta: number
+    private mediaLonga: number
 
     public async inicializa(indicadores: FonteIndicadores, params: any) {
-        this.mediaMovelCurta = await indicadores.obtemMediaMovelSimples(5, "#0000FF")
-        this.mediaMovelLonga = await indicadores.obtemMediaMovelSimples(25, "#FF0000")
+        this.mediaCurta = 5
+        this.mediaLonga = 25
+        this.mediaMovelCurta = await indicadores.obtemMediaMovelSimples(this.mediaCurta, "#0000FF")
+        this.mediaMovelLonga = await indicadores.obtemMediaMovelSimples(this.mediaLonga, "#FF0000")
         this.comprado = false
     }
 
     public executa(candles: CotacaoHistoricoValor[], dataHora: Date, precoAtivo: number, ctx: Contexto) {
-        if (ctx.obtemPosicao() < 26) {
-            return
-        }
         const mm5 = this.mediaMovelCurta.getData(ctx)
         const mm25 = this.mediaMovelLonga.getData(ctx)
+        if (ctx.obtemPosicao() < this.mediaLonga) {
+            return
+        }
 
-        const anterior = this.comparaMediasMoveis(mm5, mm25, ctx.obtemPosicao() - 2)
-        const atual = this.comparaMediasMoveis(mm5, mm25, ctx.obtemPosicao() - 1)
+        const anterior = this.comparaMediasMoveis(mm5, mm25, ctx.obtemPosicao() - 1)
+        const atual = this.comparaMediasMoveis(mm5, mm25, ctx.obtemPosicao())
 
         if (anterior != atual) {
             if (anterior) {
@@ -47,7 +51,12 @@ export class EstrategiaCruzaMedia extends Estrategia {
 export class EstrategiaCruzaMediaFactory extends EstrategiaFactory {
 
     public obtemInfoEstrategia(): any {
-        return { nome: "CRUZA_MEDIA", parametros: [{ nome: "mediaCurta", tipo: "INTEGER" }, { nome: "mediaLonga", tipo: "INTEGER" }] }
+        return {
+            nome: "CRUZA_MEDIA",
+            parametros: [
+                { nome: "mediaCurta", tipo: "INTEGER", valorDefault: "5" },
+                { nome: "mediaLonga", tipo: "INTEGER", valorDefault: "25" }]
+        }
     }
 
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {

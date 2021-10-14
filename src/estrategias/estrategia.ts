@@ -21,7 +21,7 @@ export class Indicador {
     constructor(public descricao: string, public data: any[], public cor: string, public grafico: number) { }
 
     getData(ctx: Contexto): any[] {
-        return this.data.slice(0, ctx.obtemPosicao())
+        return this.data.slice(0, ctx.obtemPosicao() + 1)
     }
 }
 
