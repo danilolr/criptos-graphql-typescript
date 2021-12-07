@@ -27,23 +27,7 @@ export class BacktestService {
         const indicadores = []
 
         for (var indicador of fonte.obtemIndicadores()) {
-            var series = []
-            if (indicador.data[0] == null) {
-                var s = []
-                for (var v of indicador.data) {
-                    s.push(v)
-                }
-                series.push({ nome: "A", valores: s })
-            } else {
-                for (var vs of indicador.data) {
-                    var s = []
-                    for (var v of vs) {
-                        s.push(v)
-                    }
-                    series.push({ nome: "A", valores: s })
-                }
-            }
-
+            var series = indicador.getSeries()
             indicadores.push({ descricao: indicador.descricao, series: series, tipoIndicador: indicador.tipoIndicador, cor: indicador.cor ? indicador.cor : null, grafico: indicador.grafico })
         }
 

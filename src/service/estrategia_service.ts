@@ -1,6 +1,6 @@
 import { Estrategia, EstrategiaFactory, FonteIndicadores } from "../estrategias/estrategia"
 import { EstrategiaCruzaMediaFactory } from "../estrategias/estrategia_cruza_media"
-import { EstrategiaIndicadoresFactory } from "../estrategias/estrategia_indicadores"
+import { EstrategiaBbRsiFactory } from "../estrategias/estrategia_bb_rsi"
 import { EstrategiaRsiFactory } from "../estrategias/estrategia_rsi"
 import { EstrategiaRsiComStopFactory } from "../estrategias/estrategia_rsi_com_stop"
 
@@ -10,7 +10,7 @@ export class EstrategiaService {
 
     constructor() {
         this.estrategiasDisponiveis = [
-            new EstrategiaIndicadoresFactory(),
+            new EstrategiaBbRsiFactory(),
             new EstrategiaCruzaMediaFactory(),
             new EstrategiaRsiFactory(),
             new EstrategiaRsiComStopFactory()

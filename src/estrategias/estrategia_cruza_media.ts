@@ -18,8 +18,8 @@ export class EstrategiaCruzaMedia extends Estrategia {
     }
 
     public executa(candles: CotacaoHistoricoValor[], dataHora: Date, precoAtivo: number, ctx: Contexto) {
-        const mm5 = this.mediaMovelCurta.getData(ctx)
-        const mm25 = this.mediaMovelLonga.getData(ctx)
+        const mm5 = this.mediaMovelCurta.getSerie(ctx, null)
+        const mm25 = this.mediaMovelLonga.getSerie(ctx, null)
         if (ctx.obtemPosicao() < this.mediaLonga) {
             return
         }

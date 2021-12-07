@@ -18,11 +18,26 @@ export abstract class EstrategiaFactory {
 
 export class Indicador {
 
-    constructor(public descricao: string, public tipoIndicador: string, public data: any[], public cor: string, public grafico: number) { }
+    constructor(public descricao: string, public tipoIndicador: string, public series: Serie[], public cor: string, public grafico: number) { }
 
-    getData(ctx: Contexto): any[] {
-        return this.data.slice(0, ctx.obtemPosicao() + 1)
+    getSerie(ctx: Contexto, descSerie: string): number[] {
+        for (var s of this.series) {
+            if (s.nome == descSerie || descSerie == null) {
+                return s.valores.slice(0, ctx.obtemPosicao() + 1)
+            }
+        }
+        return null
     }
+
+    getSeries() {
+        return this.series
+    }
+}
+
+
+export class Serie {
+
+    constructor(public nome: string, public valores: number[]) { }
 }
 
 export class FonteIndicadores {
@@ -51,8 +66,8 @@ export class FonteIndicadores {
         if (this.cached[key]) {
             return this.cached[key]
         }
-        const resp = await this.indicadoresService.calculaMediaMovelSimples(this.close, numPeriodos)
-        const i = new Indicador(`MMS ${numPeriodos}`, 'MMS', resp, cor, 0)
+        const series = await this.indicadoresService.calculaMediaMovelSimples(this.close, numPeriodos)
+        const i = new Indicador(`MMS ${numPeriodos}`, 'MMS', series, cor, 0)
         this.cached[key] = i
         return i
     }
@@ -62,8 +77,8 @@ export class FonteIndicadores {
         if (this.cached[key]) {
             return this.cached[key]
         }
-        const resp = await this.indicadoresService.calculaIndiceForcaRelativa(this.close, numPeriodos)
-        const i = new Indicador(`RSI ${numPeriodos}`, 'RSI', resp, cor, 1)
+        const series = await this.indicadoresService.calculaIndiceForcaRelativa(this.close, numPeriodos)
+        const i = new Indicador(`RSI ${numPeriodos}`, 'RSI', series, cor, 1)
         this.cached[key] = i
         return i
     }
@@ -73,8 +88,8 @@ export class FonteIndicadores {
         if (this.cached[key]) {
             return this.cached[key]
         }
-        const resp = await this.indicadoresService.calculaBandaBollinger(this.close, numPeriodos, escala)
-        const i = new Indicador(`BB ${numPeriodos}`, 'BB', resp, cores[0], 2)
+        const series = await this.indicadoresService.calculaBandaBollinger(this.close, numPeriodos, escala)
+        const i = new Indicador(`BB ${numPeriodos}`, 'BB', series, cores[0], 2)
         this.cached[key] = i
         return i
 
@@ -100,12 +115,15 @@ enum CompradoVendido {
     COMPRADO, VENDIDO, NEUTRO
 }
 
+type callbackOperacaoEfetuada = (dataHora: Date, tipoOrdem: TipoOrdem, valor: number) => void
+
 export class Contexto {
 
     posicao: number
     ordemPendente: TipoOrdem
     situacaoCompra: CompradoVendido
     ordens = []
+    callback: callbackOperacaoEfetuada
 
     constructor() {
         this.ordemPendente = null
@@ -123,6 +141,9 @@ export class Contexto {
     enviaOrdem(dataHora: Date, tipoOrdem: TipoOrdem, valor: number) {
         this.ordemPendente = tipoOrdem
         this.ordens.push({ dataHora: util.converteDataHoraParaString(dataHora), tipo: tipoOrdem == TipoOrdem.COMPRA ? "COMPRA" : "VENDA", valor: valor })
+        if (this.callback) {
+            this.callback(dataHora, tipoOrdem, valor)
+        }
     }
 
     obtemOrdens() {

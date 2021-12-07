@@ -4,7 +4,7 @@ import { Estrategia, Contexto, FonteIndicadores, Indicador, EstrategiaFactory, T
 export class EstrategiaRsi extends Estrategia {
 
     private rsi: Indicador
-    private comprado: boolean = false;
+    private comprado: boolean = false
 
     public async inicializa(indicadores: FonteIndicadores, params: any) {
         this.rsi = await indicadores.calculaIndiceForcaRelativa(14, "#00FF00")
@@ -12,7 +12,7 @@ export class EstrategiaRsi extends Estrategia {
     }
 
     public executa(candles: CotacaoHistoricoValor[], dataHora: Date, precoAtivo: number, ctx: Contexto) {
-        const rsi = this.rsi.getData(ctx)
+        const rsi = this.rsi.getSerie(ctx, null)
         console.log(ctx.obtemPosicao())
         console.log(rsi.length)
         if (ctx.obtemPosicao() < 14) {

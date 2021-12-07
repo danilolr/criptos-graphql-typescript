@@ -14,6 +14,8 @@ import { ArquivoService } from './arquivo_service'
 import { AwsS3 } from './aws_s3_service'
 import { QueryService } from './query_service'
 import { EstrategiaService } from './estrategia_service'
+import { MonitorService } from './monitor_service'
+import { TelegramService } from './telegram_service'
 
 const container = awilix.createContainer({
     injectionMode: awilix.InjectionMode.CLASSIC
@@ -35,6 +37,10 @@ container.register({
     cctxService: awilix.asClass(CctxService).singleton(),
     queryService: awilix.asClass(QueryService).singleton(),
     estrategiaService: awilix.asClass(EstrategiaService).singleton(),
+    monitorService: awilix.asClass(MonitorService).singleton(),
+    telegramService: awilix.asClass(TelegramService).singleton(),
 })
+
+console.log(container.cradle.monitorService)
 
 export { container }

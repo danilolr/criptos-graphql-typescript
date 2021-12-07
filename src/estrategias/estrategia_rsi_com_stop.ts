@@ -13,9 +13,7 @@ export class EstrategiaComStopRsi extends Estrategia {
     }
 
     public executa(candles: CotacaoHistoricoValor[], dataHora: Date, precoAtivo: number, ctx: Contexto) {
-        const rsi = this.rsi.getData(ctx)
-        console.log(ctx.obtemPosicao())
-        console.log(rsi.length)
+        const rsi = this.rsi.getSerie(ctx, null)
         if (ctx.obtemPosicao() < 14) {
             return
         }
