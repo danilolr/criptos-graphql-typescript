@@ -23,8 +23,9 @@ export class BinaceService {
 
     async lerCotacoes(simbolo: string) {
         var di = new Date().getTime()
-        const minutos = 30
-        di = di - 1000 * 60 * 50 * minutos
+        const minutos = 50
+        di = di - 1000 * 60 * 60 * minutos
+        console.log("pegando dados em " + new Date() + " desde " + new Date(di))
         var params = { limit: 50, startTime: di }
         const lines = await this.client.klines(simbolo, '1h', params)
         var data: CotacaoHistoricoValor[] = []

@@ -16,6 +16,7 @@ export class TelegramService {
 
     private onMessage(message) {
         const chatId = message.chat.id
+        console.log(chatId)
         if (th.ids.indexOf(chatId) == -1) {
             th.ids.push(chatId)
         }
@@ -25,9 +26,6 @@ export class TelegramService {
         th.bot.sendMessage(chatId, 'Received your message')
     }
 
-    sendMessage(msg: string) {
-        for (var chatId of th.ids) {
-            th.bot.sendMessage(chatId, msg)
-        }
+    sendMessage(idMonitor: number, msg: string) {
     }
 }
