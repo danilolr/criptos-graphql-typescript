@@ -18,7 +18,7 @@ export abstract class EstrategiaFactory {
 
 export class Indicador {
 
-    constructor(public descricao: string, public data: any[], public cor: string, public grafico: number) { }
+    constructor(public descricao: string, public tipoIndicador: string, public data: any[], public cor: string, public grafico: number) { }
 
     getData(ctx: Contexto): any[] {
         return this.data.slice(0, ctx.obtemPosicao() + 1)
@@ -52,7 +52,7 @@ export class FonteIndicadores {
             return this.cached[key]
         }
         const resp = await this.indicadoresService.calculaMediaMovelSimples(this.close, numPeriodos)
-        const i = new Indicador(`MMS ${numPeriodos}`, resp, cor, 0)
+        const i = new Indicador(`MMS ${numPeriodos}`, 'MMS', resp, cor, 0)
         this.cached[key] = i
         return i
     }
@@ -63,7 +63,7 @@ export class FonteIndicadores {
             return this.cached[key]
         }
         const resp = await this.indicadoresService.calculaIndiceForcaRelativa(this.close, numPeriodos)
-        const i = new Indicador(`RSI ${numPeriodos}`, resp, cor, 1)
+        const i = new Indicador(`RSI ${numPeriodos}`, 'RSI', resp, cor, 1)
         this.cached[key] = i
         return i
     }
@@ -74,7 +74,7 @@ export class FonteIndicadores {
             return this.cached[key]
         }
         const resp = await this.indicadoresService.calculaBandaBollinger(this.close, numPeriodos, escala)
-        const i = new Indicador(`MMS ${numPeriodos}`, resp, cores[0], 2)
+        const i = new Indicador(`BB ${numPeriodos}`, 'BB', resp, cores[0], 2)
         this.cached[key] = i
         return i
 

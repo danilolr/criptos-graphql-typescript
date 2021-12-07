@@ -27,7 +27,24 @@ export class BacktestService {
         const indicadores = []
 
         for (var indicador of fonte.obtemIndicadores()) {
-            indicadores.push({ descricao: indicador.descricao, valores: indicador.data, cor: indicador.cor ? indicador.cor : null, grafico: indicador.grafico })
+            var series = []
+            if (indicador.data[0] == null) {
+                var s = []
+                for (var v of indicador.data) {
+                    s.push(v)
+                }
+                series.push({ nome: "A", valores: s })
+            } else {
+                for (var vs of indicador.data) {
+                    var s = []
+                    for (var v of vs) {
+                        s.push(v)
+                    }
+                    series.push({ nome: "A", valores: s })
+                }
+            }
+
+            indicadores.push({ descricao: indicador.descricao, series: series, tipoIndicador: indicador.tipoIndicador, cor: indicador.cor ? indicador.cor : null, grafico: indicador.grafico })
         }
 
         console.log("finalizado backtest " + new Date())

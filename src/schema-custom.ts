@@ -59,8 +59,14 @@ export const typeDefs = `
 
     type Indicador {
         descricao: String!
+        tipoIndicador: String
         cor: String
-        valores: [Float]!
+        series: [Serie!]!
         grafico: Int!
+    }
+
+    type Serie {
+        nome: String!
+        valores : [Float]
     }
     `
