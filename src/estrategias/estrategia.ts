@@ -115,7 +115,7 @@ enum CompradoVendido {
     COMPRADO, VENDIDO, NEUTRO
 }
 
-type callbackOperacaoEfetuada = (dataHora: Date, tipoOrdem: TipoOrdem, valor: number) => void
+type callbackOperacaoEfetuada = (dataHora: Date, tipoOrdem: TipoOrdem, valor: number, mensagem: string) => void
 
 export class Contexto {
 
@@ -138,11 +138,11 @@ export class Contexto {
         return this.situacaoCompra
     }
 
-    enviaOrdem(dataHora: Date, tipoOrdem: TipoOrdem, valor: number) {
+    enviaOrdem(dataHora: Date, tipoOrdem: TipoOrdem, valor: number, mensagem: string) {
         this.ordemPendente = tipoOrdem
         this.ordens.push({ dataHora: util.converteDataHoraParaString(dataHora), tipo: tipoOrdem == TipoOrdem.COMPRA ? "COMPRA" : "VENDA", valor: valor })
         if (this.callback) {
-            this.callback(dataHora, tipoOrdem, valor)
+            this.callback(dataHora, tipoOrdem, valor, mensagem)
         }
     }
 

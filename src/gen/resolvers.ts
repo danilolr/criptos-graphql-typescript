@@ -36,6 +36,14 @@ export const resolvers = {
             autorizacaoService.verificaChamado(ctx, args)
             return await database.listaMenu({id: args.id, idMenuPai: args.idMenuPai})
         },
+        monitor: async (obj, args, ctx) => {
+            autorizacaoService.verificaChamado(ctx, args)
+            return await database.listaMonitor({id: args.id, idCriptoPar: args.idCriptoPar})
+        },
+        monitorUsuario: async (obj, args, ctx) => {
+            autorizacaoService.verificaChamado(ctx, args)
+            return await database.listaMonitorUsuario({id: args.id, idMonitor: args.idMonitor, idUsuario: args.idUsuario})
+        },
         role: async (obj, args, ctx) => {
             autorizacaoService.verificaChamado(ctx, args)
             return await database.listaRole({id: args.id})
@@ -51,6 +59,10 @@ export const resolvers = {
         usuario: async (obj, args, ctx) => {
             autorizacaoService.verificaChamado(ctx, args)
             return await database.listaUsuario({id: args.id})
+        },
+        usuarioTelegram: async (obj, args, ctx) => {
+            autorizacaoService.verificaChamado(ctx, args)
+            return await database.listaUsuarioTelegram({id: args.id})
         },
     },
     Arquivo: {
@@ -83,6 +95,9 @@ export const resolvers = {
         listaCotacaoHistorico: async (criptoPar) => {
             return database.listaCotacaoHistorico({idCriptoPar: criptoPar.id})
         },
+        listaMonitor: async (criptoPar) => {
+            return database.listaMonitor({idCriptoPar: criptoPar.id})
+        },
     },
     Criptoativo: {
         listaCriptoParDestino: async (criptoativo) => {
@@ -107,6 +122,22 @@ export const resolvers = {
         listaRoleMenu: async (menu) => {
             return database.listaRoleMenu({idMenu: menu.id})
         },
+    },
+    Monitor: {
+        criptoPar: async (monitor) => {
+             return await database.obtemCriptoPar(monitor.idCriptoPar)
+        }, 
+        listaMonitorUsuario: async (monitor) => {
+            return database.listaMonitorUsuario({idMonitor: monitor.id})
+        },
+    },
+    MonitorUsuario: {
+        monitor: async (monitorUsuario) => {
+             return await database.obtemMonitor(monitorUsuario.idMonitor)
+        }, 
+        usuario: async (monitorUsuario) => {
+             return await database.obtemUsuario(monitorUsuario.idUsuario)
+        }, 
     },
     Role: {
         listaRoleMenu: async (role) => {
@@ -133,9 +164,14 @@ export const resolvers = {
         }, 
     },
     Usuario: {
+        listaMonitorUsuario: async (usuario) => {
+            return database.listaMonitorUsuario({idUsuario: usuario.id})
+        },
         listaRoleUsuario: async (usuario) => {
             return database.listaRoleUsuario({idUsuario: usuario.id})
         },
+    },
+    UsuarioTelegram: {
     },
 Mutation: {
         insereArquivo: async (obj, args, ctx) => {
@@ -201,6 +237,24 @@ Mutation: {
         excluiMenu: async (obj, args, ctx) => {
             return await database.excluiMenu(args.id)
         },
+        insereMonitor: async (obj, args, ctx) => {
+            return await database.insereMonitor({estrategia: args.estrategia, idCriptoPar: args.idCriptoPar, params: args.params, tempo: args.tempo, ativo: args.ativo})
+        },
+        atualizaMonitor: async (obj, args, ctx) => {
+            return await database.atualizaMonitor({id: args.id, estrategia: args.estrategia, idCriptoPar: args.idCriptoPar, params: args.params, tempo: args.tempo, ativo: args.ativo})
+        },
+        excluiMonitor: async (obj, args, ctx) => {
+            return await database.excluiMonitor(args.id)
+        },
+        insereMonitorUsuario: async (obj, args, ctx) => {
+            return await database.insereMonitorUsuario({idMonitor: args.idMonitor, idUsuario: args.idUsuario, ativo: args.ativo})
+        },
+        atualizaMonitorUsuario: async (obj, args, ctx) => {
+            return await database.atualizaMonitorUsuario({id: args.id, idMonitor: args.idMonitor, idUsuario: args.idUsuario, ativo: args.ativo})
+        },
+        excluiMonitorUsuario: async (obj, args, ctx) => {
+            return await database.excluiMonitorUsuario(args.id)
+        },
         insereRole: async (obj, args, ctx) => {
             return await database.insereRole({descRole: args.descRole, role: args.role, ativo: args.ativo})
         },
@@ -229,13 +283,22 @@ Mutation: {
             return await database.excluiRoleUsuario(args.id)
         },
         insereUsuario: async (obj, args, ctx) => {
-            return await database.insereUsuario({cpf: args.cpf, nomeUsuario: args.nomeUsuario, senha: args.senha, email: args.email, ativo: args.ativo})
+            return await database.insereUsuario({cpf: args.cpf, nomeUsuario: args.nomeUsuario, senha: args.senha, email: args.email, telegramChatId: args.telegramChatId, ativo: args.ativo})
         },
         atualizaUsuario: async (obj, args, ctx) => {
-            return await database.atualizaUsuario({id: args.id, cpf: args.cpf, nomeUsuario: args.nomeUsuario, senha: args.senha, email: args.email, ativo: args.ativo})
+            return await database.atualizaUsuario({id: args.id, cpf: args.cpf, nomeUsuario: args.nomeUsuario, senha: args.senha, email: args.email, telegramChatId: args.telegramChatId, ativo: args.ativo})
         },
         excluiUsuario: async (obj, args, ctx) => {
             return await database.excluiUsuario(args.id)
+        },
+        insereUsuarioTelegram: async (obj, args, ctx) => {
+            return await database.insereUsuarioTelegram({idUsuario: args.idUsuario, ativo: args.ativo})
+        },
+        atualizaUsuarioTelegram: async (obj, args, ctx) => {
+            return await database.atualizaUsuarioTelegram({id: args.id, idUsuario: args.idUsuario, ativo: args.ativo})
+        },
+        excluiUsuarioTelegram: async (obj, args, ctx) => {
+            return await database.excluiUsuarioTelegram(args.id)
         },
     }
 }

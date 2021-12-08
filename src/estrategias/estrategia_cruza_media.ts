@@ -30,12 +30,18 @@ export class EstrategiaCruzaMedia extends Estrategia {
         if (anterior != atual) {
             if (anterior) {
                 if (this.comprado) {
-                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close)
+                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close, `
+                    Estratégia Cruzamento de médias
+                    Ordem de venda
+                    `)
                     this.comprado = false
                 }
             } else {
                 if (!this.comprado) {
-                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close)
+                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close, `
+                    Estratégia Cruzamento de médias
+                    Ordem de compra
+                    `)
                     this.comprado = true
                 }
             }

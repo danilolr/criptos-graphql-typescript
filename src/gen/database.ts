@@ -1,5 +1,5 @@
 import { DbConnectionMysql, DbQueryResult, DbInsertResult, DbUpdateResult } from "./mysql"
-import { Arquivo, CotacaoHistorico, CotacaoHistoricoValor, CriptoPar, Criptoativo, Exchange, Menu, Role, RoleMenu, RoleUsuario, Usuario, ParamListaArquivo, ParamListaCotacaoHistorico, ParamListaCotacaoHistoricoValor, ParamListaCriptoPar, ParamListaCriptoativo, ParamListaExchange, ParamListaMenu, ParamListaRole, ParamListaRoleMenu, ParamListaRoleUsuario, ParamListaUsuario } from './model' 
+import { Arquivo, CotacaoHistorico, CotacaoHistoricoValor, CriptoPar, Criptoativo, Exchange, Menu, Monitor, MonitorUsuario, Role, RoleMenu, RoleUsuario, Usuario, UsuarioTelegram, ParamListaArquivo, ParamListaCotacaoHistorico, ParamListaCotacaoHistoricoValor, ParamListaCriptoPar, ParamListaCriptoativo, ParamListaExchange, ParamListaMenu, ParamListaMonitor, ParamListaMonitorUsuario, ParamListaRole, ParamListaRoleMenu, ParamListaRoleUsuario, ParamListaUsuario, ParamListaUsuarioTelegram } from './model' 
 
 interface CondicaoId {
     id: number
@@ -534,6 +534,126 @@ export class DatabaseBase {
         }
     }
 
+    public async listaMonitor(params: ParamListaMonitor = {}): Promise<Monitor[]> {
+        const resultado =  await this.queryLista("SELECT p.* FROM monitor p", {
+            id: {id: params.id, coluna: 'id_monitor'},
+            fk: [{id: params.idCriptoPar, coluna: 'p.id_cripto_par'}, ],
+            join: [],
+            extra: []
+        })
+        const resp = []
+        for (const data of resultado.results) {
+            resp.push(this.criaRegistroMonitor(data))
+        }
+        return resp
+    }
+
+    public async obtemMonitor(id: number): Promise<Monitor> {
+        var resultado = await this.db.query("select * from monitor where ativo='V' and id_monitor=? order by id_monitor", [id])
+        if (resultado.results.length == 0) {
+            return null
+        } else {
+            return this.criaRegistroMonitor(resultado.results[0])
+        }
+    }
+
+    protected criaRegistroMonitor(data: any): Monitor {
+        return {
+            id: data.id_monitor,
+            estrategia: data.estrategia,
+            idCriptoPar: data.id_cripto_par,
+            params: data.params ? data.params.toString('utf-8') : null,
+            tempo: data.tempo,
+            ativo: data.ativo === null ? null : data.ativo === "V",
+        }
+    }
+
+    public async insereMonitor(monitor: Monitor): Promise<DbInsertResult>  {	
+        try {
+            const resp = await this.db.insert("insert into monitor (estrategia, id_cripto_par, params, tempo, ativo) values (?, ?, ?, ?, ?)", [monitor.estrategia, monitor.idCriptoPar, monitor.params, monitor.tempo, this.corrigeParamBoolInsercao(monitor.ativo)])
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async atualizaMonitor(monitor: Monitor): Promise<DbUpdateResult> {
+        try {
+            const resp = await this.db.update("update monitor set ? where id_monitor=?", this.criaParametrosAtualizacao(monitor))
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async excluiMonitor(idMonitor: number): Promise<DbUpdateResult> {
+        try {
+            const resp = await this.db.update("update monitor set ativo = 'F' where id_monitor = ?", [idMonitor])
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async listaMonitorUsuario(params: ParamListaMonitorUsuario = {}): Promise<MonitorUsuario[]> {
+        const resultado =  await this.queryLista("SELECT p.* FROM monitor_usuario p", {
+            id: {id: params.id, coluna: 'id_monitor_usuario'},
+            fk: [{id: params.idMonitor, coluna: 'p.id_monitor'}, {id: params.idUsuario, coluna: 'p.id_usuario'}, ],
+            join: [],
+            extra: []
+        })
+        const resp = []
+        for (const data of resultado.results) {
+            resp.push(this.criaRegistroMonitorUsuario(data))
+        }
+        return resp
+    }
+
+    public async obtemMonitorUsuario(id: number): Promise<MonitorUsuario> {
+        var resultado = await this.db.query("select * from monitor_usuario where ativo='V' and id_monitor_usuario=? order by id_monitor_usuario", [id])
+        if (resultado.results.length == 0) {
+            return null
+        } else {
+            return this.criaRegistroMonitorUsuario(resultado.results[0])
+        }
+    }
+
+    protected criaRegistroMonitorUsuario(data: any): MonitorUsuario {
+        return {
+            id: data.id_monitor_usuario,
+            idMonitor: data.id_monitor,
+            idUsuario: data.id_usuario,
+            ativo: data.ativo === null ? null : data.ativo === "V",
+        }
+    }
+
+    public async insereMonitorUsuario(monitorUsuario: MonitorUsuario): Promise<DbInsertResult>  {	
+        try {
+            const resp = await this.db.insert("insert into monitor_usuario (id_monitor, id_usuario, ativo) values (?, ?, ?)", [monitorUsuario.idMonitor, monitorUsuario.idUsuario, this.corrigeParamBoolInsercao(monitorUsuario.ativo)])
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async atualizaMonitorUsuario(monitorUsuario: MonitorUsuario): Promise<DbUpdateResult> {
+        try {
+            const resp = await this.db.update("update monitor_usuario set ? where id_monitor_usuario=?", this.criaParametrosAtualizacao(monitorUsuario))
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async excluiMonitorUsuario(idMonitorUsuario: number): Promise<DbUpdateResult> {
+        try {
+            const resp = await this.db.update("update monitor_usuario set ativo = 'F' where id_monitor_usuario = ?", [idMonitorUsuario])
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
     public async listaRole(params: ParamListaRole = {}): Promise<Role[]> {
         const resultado =  await this.queryLista("SELECT p.* FROM role p", {
             id: {id: params.id, coluna: 'id_role'},
@@ -742,13 +862,14 @@ export class DatabaseBase {
             nomeUsuario: data.nome_usuario,
             senha: data.senha,
             email: data.email,
+            telegramChatId: data.telegram_chat_id,
             ativo: data.ativo === null ? null : data.ativo === "V",
         }
     }
 
     public async insereUsuario(usuario: Usuario): Promise<DbInsertResult>  {	
         try {
-            const resp = await this.db.insert("insert into usuario (cpf, nome_usuario, senha, email, ativo) values (?, ?, ?, ?, ?)", [usuario.cpf, usuario.nomeUsuario, usuario.senha, usuario.email, this.corrigeParamBoolInsercao(usuario.ativo)])
+            const resp = await this.db.insert("insert into usuario (cpf, nome_usuario, senha, email, telegram_chat_id, ativo) values (?, ?, ?, ?, ?, ?)", [usuario.cpf, usuario.nomeUsuario, usuario.senha, usuario.email, usuario.telegramChatId, this.corrigeParamBoolInsercao(usuario.ativo)])
             return resp
         } catch (e) {
             return e
@@ -767,6 +888,64 @@ export class DatabaseBase {
     public async excluiUsuario(idUsuario: number): Promise<DbUpdateResult> {
         try {
             const resp = await this.db.update("update usuario set ativo = 'F' where id_usuario = ?", [idUsuario])
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async listaUsuarioTelegram(params: ParamListaUsuarioTelegram = {}): Promise<UsuarioTelegram[]> {
+        const resultado =  await this.queryLista("SELECT p.* FROM usuario_telegram p", {
+            id: {id: params.id, coluna: 'id_usuario_telegram'},
+            fk: [],
+            join: [],
+            extra: []
+        })
+        const resp = []
+        for (const data of resultado.results) {
+            resp.push(this.criaRegistroUsuarioTelegram(data))
+        }
+        return resp
+    }
+
+    public async obtemUsuarioTelegram(id: number): Promise<UsuarioTelegram> {
+        var resultado = await this.db.query("select * from usuario_telegram where ativo='V' and id_usuario_telegram=? order by id_usuario_telegram", [id])
+        if (resultado.results.length == 0) {
+            return null
+        } else {
+            return this.criaRegistroUsuarioTelegram(resultado.results[0])
+        }
+    }
+
+    protected criaRegistroUsuarioTelegram(data: any): UsuarioTelegram {
+        return {
+            id: data.id_usuario_telegram,
+            idUsuario: data.id_usuario,
+            ativo: data.ativo === null ? null : data.ativo === "V",
+        }
+    }
+
+    public async insereUsuarioTelegram(usuarioTelegram: UsuarioTelegram): Promise<DbInsertResult>  {	
+        try {
+            const resp = await this.db.insert("insert into usuario_telegram (id_usuario, ativo) values (?, ?)", [usuarioTelegram.idUsuario, this.corrigeParamBoolInsercao(usuarioTelegram.ativo)])
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async atualizaUsuarioTelegram(usuarioTelegram: UsuarioTelegram): Promise<DbUpdateResult> {
+        try {
+            const resp = await this.db.update("update usuario_telegram set ? where id_usuario_telegram=?", this.criaParametrosAtualizacao(usuarioTelegram))
+            return resp
+        } catch (e) {
+            return e
+        }
+    }
+
+    public async excluiUsuarioTelegram(idUsuarioTelegram: number): Promise<DbUpdateResult> {
+        try {
+            const resp = await this.db.update("update usuario_telegram set ativo = 'F' where id_usuario_telegram = ?", [idUsuarioTelegram])
             return resp
         } catch (e) {
             return e

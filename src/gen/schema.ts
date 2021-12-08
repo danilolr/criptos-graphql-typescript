@@ -8,10 +8,13 @@ type Query {
      criptoativo(id: Int): [Criptoativo]
      exchange(id: Int): [Exchange]
      menu(id: Int, idMenuPai: Int): [Menu]
+     monitor(id: Int, idCriptoPar: Int): [Monitor]
+     monitorUsuario(id: Int, idMonitor: Int, idUsuario: Int): [MonitorUsuario]
      role(id: Int): [Role]
      roleMenu(id: Int, idRole: Int, idMenu: Int): [RoleMenu]
      roleUsuario(id: Int, idRole: Int, idUsuario: Int): [RoleUsuario]
      usuario(id: Int): [Usuario]
+     usuarioTelegram(id: Int): [UsuarioTelegram]
 }
 
 type Arquivo {
@@ -53,6 +56,7 @@ type CriptoPar {
     simbolo: String, 
     ativo: Boolean, 
     listaCotacaoHistorico : [CotacaoHistorico],
+    listaMonitor : [Monitor],
 }
 
 type Criptoativo {
@@ -80,6 +84,23 @@ type Menu {
     ativo: Boolean, 
     listaMenu : [Menu],
     listaRoleMenu : [RoleMenu],
+}
+
+type Monitor {
+    id: ID
+    estrategia: String, 
+    criptoPar: CriptoPar,
+    params: String, 
+    tempo: String, 
+    ativo: Boolean, 
+    listaMonitorUsuario : [MonitorUsuario],
+}
+
+type MonitorUsuario {
+    id: ID
+    monitor: Monitor,
+    usuario: Usuario,
+    ativo: Boolean, 
 }
 
 type Role {
@@ -112,8 +133,16 @@ type Usuario {
     nomeUsuario: String, 
     senha: String, 
     email: String, 
+    telegramChatId: String, 
     ativo: Boolean, 
+    listaMonitorUsuario : [MonitorUsuario],
     listaRoleUsuario : [RoleUsuario],
+}
+
+type UsuarioTelegram {
+    id: ID
+    idUsuario: Int, 
+    ativo: Boolean, 
 }
 
 type Mutation {
@@ -138,6 +167,12 @@ type Mutation {
     insereMenu(descricao: String, formulario: String, idMenuPai: Int, ordem: Int, ativo: Boolean): RetornoInsercaoAtualizacao
     atualizaMenu(id: Int!, descricao: String, formulario: String, idMenuPai: Int, ordem: Int, ativo: Boolean): RetornoInsercaoAtualizacao
     excluiMenu(id: Int!): RetornoInsercaoAtualizacao
+    insereMonitor(estrategia: String, idCriptoPar: Int, params: String, tempo: String, ativo: Boolean): RetornoInsercaoAtualizacao
+    atualizaMonitor(id: Int!, estrategia: String, idCriptoPar: Int, params: String, tempo: String, ativo: Boolean): RetornoInsercaoAtualizacao
+    excluiMonitor(id: Int!): RetornoInsercaoAtualizacao
+    insereMonitorUsuario(idMonitor: Int, idUsuario: Int, ativo: Boolean): RetornoInsercaoAtualizacao
+    atualizaMonitorUsuario(id: Int!, idMonitor: Int, idUsuario: Int, ativo: Boolean): RetornoInsercaoAtualizacao
+    excluiMonitorUsuario(id: Int!): RetornoInsercaoAtualizacao
     insereRole(descRole: String, role: String, ativo: Boolean): RetornoInsercaoAtualizacao
     atualizaRole(id: Int!, descRole: String, role: String, ativo: Boolean): RetornoInsercaoAtualizacao
     excluiRole(id: Int!): RetornoInsercaoAtualizacao
@@ -147,9 +182,12 @@ type Mutation {
     insereRoleUsuario(idRole: Int, idUsuario: Int, ativo: Boolean): RetornoInsercaoAtualizacao
     atualizaRoleUsuario(id: Int!, idRole: Int, idUsuario: Int, ativo: Boolean): RetornoInsercaoAtualizacao
     excluiRoleUsuario(id: Int!): RetornoInsercaoAtualizacao
-    insereUsuario(cpf: String, nomeUsuario: String, senha: String, email: String, ativo: Boolean): RetornoInsercaoAtualizacao
-    atualizaUsuario(id: Int!, cpf: String, nomeUsuario: String, senha: String, email: String, ativo: Boolean): RetornoInsercaoAtualizacao
+    insereUsuario(cpf: String, nomeUsuario: String, senha: String, email: String, telegramChatId: String, ativo: Boolean): RetornoInsercaoAtualizacao
+    atualizaUsuario(id: Int!, cpf: String, nomeUsuario: String, senha: String, email: String, telegramChatId: String, ativo: Boolean): RetornoInsercaoAtualizacao
     excluiUsuario(id: Int!): RetornoInsercaoAtualizacao
+    insereUsuarioTelegram(idUsuario: Int, ativo: Boolean): RetornoInsercaoAtualizacao
+    atualizaUsuarioTelegram(id: Int!, idUsuario: Int, ativo: Boolean): RetornoInsercaoAtualizacao
+    excluiUsuarioTelegram(id: Int!): RetornoInsercaoAtualizacao
 }
 
 type RetornoInsercaoAtualizacao {

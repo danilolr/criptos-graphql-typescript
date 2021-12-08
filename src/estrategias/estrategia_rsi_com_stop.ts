@@ -22,18 +22,18 @@ export class EstrategiaComStopRsi extends Estrategia {
         if (this.comprado) {
             if (rsiValue > 60) {
                 const precoVenda = candles[candles.length - 1].close
-                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, precoVenda)
+                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, precoVenda, '')
                 this.comprado = false
             } else {
                 if (candles[candles.length - 1].low < this.valorStop) {
-                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, this.valorStop)
+                    ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, this.valorStop, '')
                     this.comprado = false
                 }
             }
         } else {
             if (rsiValue < 40) {
                 const precoCompra = candles[candles.length - 1].close
-                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close)
+                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close, '')
                 this.valorStop = precoCompra * 0.95
                 this.comprado = true
             }

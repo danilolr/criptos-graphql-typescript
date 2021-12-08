@@ -33,7 +33,7 @@ export class EstrategiaService {
 
     }
 
-    private obtemFactory(nomeEstrategia: string): EstrategiaFactory {
+    public obtemFactory(nomeEstrategia: string): EstrategiaFactory {
         for (let factory of this.estrategiasDisponiveis) {
             if (factory.obtemInfoEstrategia().nome == nomeEstrategia) {
                 return factory

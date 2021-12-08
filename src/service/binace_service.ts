@@ -21,15 +21,16 @@ export class BinaceService {
         return lines.data
     }
 
-    async lerCotacoes(simbolo: string) {
+    async lerCotacoes(simbolo: string, tempo: string) {
         var di = new Date().getTime()
         const minutos = 50
         di = di - 1000 * 60 * 60 * minutos
         console.log("pegando dados em " + new Date() + " desde " + new Date(di))
         var params = { limit: 50, startTime: di }
-        const lines = await this.client.klines(simbolo, '1h', params)
+        const lines = await this.client.klines(simbolo, "1h", params)
         var data: CotacaoHistoricoValor[] = []
         for (var cotacao of lines.data) {
+            //            console.log(new Date(cotacao[0]))
             data.push({
                 dataHora: new Date(cotacao[0]),
                 open: parseFloat(cotacao[1]),

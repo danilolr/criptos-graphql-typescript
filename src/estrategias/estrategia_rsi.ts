@@ -4,32 +4,27 @@ import { Estrategia, Contexto, FonteIndicadores, Indicador, EstrategiaFactory, T
 export class EstrategiaRsi extends Estrategia {
 
     private rsi: Indicador
-    private comprado: boolean = false
 
     public async inicializa(indicadores: FonteIndicadores, params: any) {
         this.rsi = await indicadores.calculaIndiceForcaRelativa(14, "#00FF00")
-        this.comprado = false
     }
 
     public executa(candles: CotacaoHistoricoValor[], dataHora: Date, precoAtivo: number, ctx: Contexto) {
-        const rsi = this.rsi.getSerie(ctx, null)
-        console.log(ctx.obtemPosicao())
-        console.log(rsi.length)
-        if (ctx.obtemPosicao() < 14) {
-            return
+        const rsiValue = this.rsi.getSerie(ctx, null)[ctx.obtemPosicao()]
+        console.log(new Date() + "RSI = " + rsiValue)
+        if (rsiValue < 30) {
+            ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close, `
+            Estratégia RSI
+            Ordem de compra
+            RSI = ${rsiValue}
+            `)
         }
-        const rsiValue = rsi[ctx.obtemPosicao()]
-
-        if (this.comprado) {
-            if (rsiValue > 60) {
-                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close)
-                this.comprado = false
-            }
-        } else {
-            if (rsiValue < 40) {
-                ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close)
-                this.comprado = true
-            }
+        if (rsiValue > 70) {
+            ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close, `
+            Estratégia RSI
+            Ordem de venda 
+            RSI = ${rsiValue}
+            `)
         }
     }
 }

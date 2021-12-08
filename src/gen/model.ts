@@ -65,6 +65,22 @@ export interface Menu {
     ativo?: boolean, 
 }
 
+export interface Monitor {
+    id?: number
+    estrategia?: string, 
+    idCriptoPar?: number, 
+    params?: string, 
+    tempo?: string, 
+    ativo?: boolean, 
+}
+
+export interface MonitorUsuario {
+    id?: number
+    idMonitor?: number, 
+    idUsuario?: number, 
+    ativo?: boolean, 
+}
+
 export interface Role {
     id?: number
     descRole?: string, 
@@ -93,6 +109,13 @@ export interface Usuario {
     nomeUsuario?: string, 
     senha?: string, 
     email?: string, 
+    telegramChatId?: string, 
+    ativo?: boolean, 
+}
+
+export interface UsuarioTelegram {
+    id?: number
+    idUsuario?: number, 
     ativo?: boolean, 
 }
 
@@ -130,6 +153,17 @@ export interface ParamListaMenu {
     idMenuPai?: number, 
 }
 
+export interface ParamListaMonitor {
+    id?: number
+    idCriptoPar?: number, 
+}
+
+export interface ParamListaMonitorUsuario {
+    id?: number
+    idMonitor?: number, 
+    idUsuario?: number, 
+}
+
 export interface ParamListaRole {
     id?: number
 }
@@ -147,6 +181,10 @@ export interface ParamListaRoleUsuario {
 }
 
 export interface ParamListaUsuario {
+    id?: number
+}
+
+export interface ParamListaUsuarioTelegram {
     id?: number
 }
 

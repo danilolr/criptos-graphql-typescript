@@ -1,4 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api')
+import { Database } from '../database-custom'
 
 var th: TelegramService
 
@@ -8,7 +9,7 @@ export class TelegramService {
     private bot
     private ids = []
 
-    constructor() {
+    constructor(private database: Database) {
         th = this
         this.bot = new TelegramBot(this.token, { polling: true });
         this.bot.on('message', th.onMessage)
@@ -26,6 +27,7 @@ export class TelegramService {
         th.bot.sendMessage(chatId, 'Received your message')
     }
 
-    sendMessage(idMonitor: number, msg: string) {
+    sendMessage(chatId: string, msg: string) {
+        th.bot.sendMessage(chatId, msg)
     }
 }
