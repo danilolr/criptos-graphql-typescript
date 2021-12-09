@@ -23,19 +23,18 @@ export class EstrategiaBbRsi extends Estrategia {
             if (rsiValue < 40) {
                 console.log("Enviada ordem compra " + candles[candles.length - 1].close)
                 ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close, `
-                Estratégia Banda Bollinger + RSI
-                Ordem de compra
-                RSI = ${rsiValue}
-                `)
+Estratégia Banda Bollinger + RSI
+Ordem de compra
+RSI = ${rsiValue}`)
                 this.comprado = true
             }
         } else if (this.comprado) {
             if (rsiValue > 60) {
                 console.log("Enviada ordem venda " + candles[candles.length - 1].close)
                 ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close, `
-                Estratégia Banda Bollinger + RSI
-                Ordem de venda 
-                RSI = ${rsiValue}
+Estratégia Banda Bollinger + RSI
+Ordem de venda 
+RSI = ${rsiValue}
                 `)
                 this.comprado = false
             }
@@ -55,6 +54,7 @@ export class EstrategiaBbRsiFactory extends EstrategiaFactory {
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {
         const estrategia = new EstrategiaBbRsi()
         await estrategia.inicializa(indicadores, params)
+        estrategia.nome = "BB_RSI"
         return estrategia
     }
 

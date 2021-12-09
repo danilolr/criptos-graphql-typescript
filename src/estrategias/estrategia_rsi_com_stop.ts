@@ -57,6 +57,7 @@ export class EstrategiaRsiComStopFactory extends EstrategiaFactory {
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {
         const estrategia = new EstrategiaComStopRsi()
         await estrategia.inicializa(indicadores, params)
+        estrategia.nome = "RSI_STOP"
         return estrategia
     }
 

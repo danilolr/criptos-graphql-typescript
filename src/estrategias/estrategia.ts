@@ -4,6 +4,8 @@ import * as util from "../gen/util"
 
 export abstract class Estrategia {
 
+    public nome: String
+
     public abstract inicializa(indicadores: FonteIndicadores, params: any)
     public abstract executa(candles: CotacaoHistoricoValor[], dataHora: Date, precoAtivo: number, cxt: Contexto)
 

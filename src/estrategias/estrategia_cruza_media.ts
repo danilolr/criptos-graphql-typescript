@@ -31,17 +31,15 @@ export class EstrategiaCruzaMedia extends Estrategia {
             if (anterior) {
                 if (this.comprado) {
                     ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close, `
-                    Estratégia Cruzamento de médias
-                    Ordem de venda
-                    `)
+Estratégia Cruzamento de médias
+Ordem de venda`)
                     this.comprado = false
                 }
             } else {
                 if (!this.comprado) {
                     ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close, `
-                    Estratégia Cruzamento de médias
-                    Ordem de compra
-                    `)
+Estratégia Cruzamento de médias
+Ordem de compra`)
                     this.comprado = true
                 }
             }
@@ -68,6 +66,7 @@ export class EstrategiaCruzaMediaFactory extends EstrategiaFactory {
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {
         const estrategia = new EstrategiaCruzaMedia()
         await estrategia.inicializa(indicadores, params)
+        estrategia.nome = "CRUZA_MEDIA"
         return estrategia
     }
 

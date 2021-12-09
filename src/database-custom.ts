@@ -1,8 +1,17 @@
 import { DatabaseBase } from "./gen/database"
-import { CotacaoHistoricoValor, Menu, RoleMenu, RoleUsuario } from "./gen/model"
+import { CotacaoHistoricoValor, Menu, RoleMenu, RoleUsuario, Usuario } from "./gen/model"
 import { DbUpdateResult } from "./gen/mysql"
 
 export class Database extends DatabaseBase {
+
+    async listaUsuarioPorMonitor(idMonitor: number): Promise<Usuario[]> {
+        const resultado = await this.db.query("select u.* from usuario u, monitor_usuario m where m.id_usuario=u.id_usuario and m.id_monitor=?", [idMonitor])
+        const resp = []
+        for (const data of resultado.results) {
+            resp.push(this.criaRegistroUsuario(data))
+        }
+        return resp
+    }
 
     async obtemUsuarioPorEmail(email) {
         var resultado = await this.db.query("select * from usuario where ativo='V' and email=?", [email])

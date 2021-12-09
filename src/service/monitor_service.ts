@@ -4,6 +4,7 @@ import { IndicadoresService } from "./indicadores_service"
 import { TelegramService } from "./telegram_service"
 import { Database } from '../database-custom'
 import { EstrategiaService } from './estrategia_service'
+import { converteDataHoraParaString } from "../gen/util"
 
 var cron = require('node-cron')
 
@@ -14,12 +15,13 @@ export class MonitorService {
     constructor(private estrategiaService: EstrategiaService, private binaceService: BinaceService, private indicadoresService: IndicadoresService, private telegramService: TelegramService, private database: Database) {
         console.log("Inicializado monitor")
         th = this
-        cron.schedule('1 * * * *', this.executaMonitor)
-        //cron.schedule('0 * * * * *', this.executaMonitor)
+        cron.schedule('1 * * * *', this.executaMonitor) // hora 1 minuto
     }
 
     async executaMonitor() {
         console.log("Executando monitor em " + new Date())
+
+        th.telegramService.sendMessage("760422308", "Executando monitor em " + converteDataHoraParaString(new Date()))
         const cotacoes = {}
         for (var monitor of await th.database.listaMonitor()) {
             const criptoPar = await th.database.obtemCriptoPar(monitor.idCriptoPar)
@@ -35,7 +37,7 @@ export class MonitorService {
             const criptoPar = await th.database.obtemCriptoPar(monitor.idCriptoPar)
             const fonte = new FonteIndicadores(cotacoes[criptoPar.simbolo], th.indicadoresService)
             const estrategia = await factory.criaInstancia(fonte, monitor.params)
-            th.executaEstrategia(monitor.id, estrategia, cotacoes[criptoPar.simbolo])
+            await th.executaEstrategia(monitor.id, estrategia, cotacoes[criptoPar.simbolo])
         }
     }
 
@@ -48,26 +50,26 @@ export class MonitorService {
         }
         const monitor = await th.database.obtemMonitor(idMonitor)
         const criptoPar = await th.database.obtemCriptoPar(monitor.idCriptoPar)
-        for (var usuario of await th.database.listaUsuario()) {
+        for (var usuario of await th.database.listaUsuarioPorMonitor(idMonitor)) {
+            console.log("enviando msg para usuario: " + usuario + " -> " + mensagem)
             th.telegramService.sendMessage(usuario.telegramChatId, `${mensagem}
-            Horário: ${dataHora} 
-            Valor ${valor}
-            Ativo ${criptoPar.simbolo}
-            `)
+Horário: ${converteDataHoraParaString(dataHora)} 
+Valor: ${valor}
+Ativo: ${criptoPar.simbolo}`)
         }
-
-
     }
 
     async executaEstrategia(idMonitor, estrategia: Estrategia, cotacoes) {
-        console.log("Executando estrategia " + typeof (estrategia))
+        const monitor = await th.database.obtemMonitor(idMonitor)
+        const criptoPar = await th.database.obtemCriptoPar(monitor.idCriptoPar)
+        console.log(`--- Executando estrategia ${estrategia.nome} em ${criptoPar.simbolo} ---`)
         const ctx = new Contexto()
-        //ctx.callback = th.callbackOperacao
         ctx.callback = (dataHora: Date, tipoOrdem: TipoOrdem, valor: number, mensagem: string) => {
             th.callbackOperacao(idMonitor, dataHora, tipoOrdem, valor, mensagem)
         }
         ctx.setaPosicao(cotacoes.length - 1)
         estrategia.executa(cotacoes, cotacoes[cotacoes.length - 1].dataHora, cotacoes[cotacoes.length - 1].open, ctx)
+        console.log(`------------------------------------------------\n`)
     }
 
 }

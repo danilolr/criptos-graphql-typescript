@@ -14,16 +14,15 @@ export class EstrategiaRsi extends Estrategia {
         console.log(new Date() + "RSI = " + rsiValue)
         if (rsiValue < 30) {
             ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.COMPRA, candles[candles.length - 1].close, `
-            Estratégia RSI
-            Ordem de compra
-            RSI = ${rsiValue}
-            `)
+Estratégia RSI
+Ordem de compra
+RSI = ${rsiValue}`)
         }
         if (rsiValue > 70) {
             ctx.enviaOrdem(candles[candles.length - 1].dataHora, TipoOrdem.VENDA, candles[candles.length - 1].close, `
-            Estratégia RSI
-            Ordem de venda 
-            RSI = ${rsiValue}
+Estratégia RSI
+Ordem de venda 
+RSI = ${rsiValue}
             `)
         }
     }
@@ -44,6 +43,7 @@ export class EstrategiaRsiFactory extends EstrategiaFactory {
     public async criaInstancia(indicadores: FonteIndicadores, params: any): Promise<Estrategia> {
         const estrategia = new EstrategiaRsi()
         await estrategia.inicializa(indicadores, params)
+        estrategia.nome = "RSI"
         return estrategia
     }
 
